@@ -15,7 +15,6 @@ pipeline {
                     node --version
                     npm --version
                     npm ci 
-                    npm test
                     npm run build
                     ls -la 
                 '''
@@ -23,17 +22,22 @@ pipeline {
             }
         }
 
-        // stage('test') {
-        //     agent {
-        //         docker {
-        //             image 'node:18-alpine'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //        sh 'npm test'
+        stage('test') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+               sh 'npm test'
                 
-        //     }
-        // }
+            }
+        }
+    }
+    post {
+        always {
+            junit 'test-results/junit.xml'
+        }
     }
 }
